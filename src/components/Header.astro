@@ -1,30 +1,58 @@
 ---
+
 ---
+
 <header>
+  <div class="home-icon">
+    <a href="/">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="icon icon-tabler icons-tabler-outline icon-tabler-home"
+          ><path stroke="none" d="M0 0h24v24H0z" fill="none"></path><path
+            d="M5 12l-2 0l9 -9l9 9l-2 0"></path><path
+            d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7"></path><path
+            d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6"></path></svg
+        >
+    </a>
+  </div>
+  <nav>
     <a href="/productos">PRODUCTOS</a>
     <a href="/ventas">VENTAS</a>
+  </nav>
 </header>
 
-<style> 
+<style>
+  header {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+    width: 100%;
+    padding: 1rem;
+  }
 
-    header {
-        display: flex;
-        justify-content: center;
-        gap: 5rem;
-        box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
-        width: 100%;
-        padding-top: 1rem;
-        padding-bottom: 1rem;
-    }
+  nav {
+    display: flex;
+    gap: 2rem;
+  }
 
-    a {
-        color: white;
-        text-decoration: none;
-        transition: ease-in-out 0.2s;
-    }
+  a {
+    color: white;
+    text-decoration: none;
+    transition: ease-in-out 0.2s;
+  }
 
-    a:hover {
-        color: rgb(0, 208, 255)
-    }
-
+  a:hover {
+    color: rgb(0, 208, 255);
+  }
 </style>
+
+

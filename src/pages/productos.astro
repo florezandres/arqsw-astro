@@ -1,8 +1,76 @@
 ---
 import Layout from "../layouts/Layout.astro";
+
+const res = await fetch('http://localhost:8081/products?page=1&limit=20');
+const data = await res.json();
+
+interface Product {
+  name: string;
+  description: string;
+  price: number;
+}
+
+const handleClick = (name: string) => {
+  console.log(name);
+  const url = new URL(location.href);
+  url.pathname = `/productos/producto`;
+  url.searchParams.set('name', name);
+  location.href = url.toString();
+};
+
 ---
 
 <Layout title="Productos">
-    <h1>Productos</h1>
-    <p>Esta es la página de productos.</p>
+  <h1>Productos</h1>
+  <p>Listado de productos</p>
+  <button>Agregar producto a inventario</button>
+  {data.products?.length ? (
+    <ul>
+      {data.products?.map((product: Product) => (
+        <li onclick={`javascript:handleClick('${product.name}')`}>
+          <strong>{product.name}</strong>: {product.description} - ${product.price}
+        </li>
+      ))}
+    </ul>
+  ) : (
+    <p>No hay productos en el inventario</p>
+  )}
 </Layout>
+
+<style>
+  .product-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    margin: 20px;
+  }
+
+  .product-card {
+    border: 1px solid #ddd;
+    padding: 16px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.2s ease;
+  }
+
+  .product-card:hover {
+    transform: translateY(-8px);
+  }
+
+  .product-card h3 {
+    margin: 10px 0;
+    font-size: 1.2rem;
+    color: #333;
+  }
+
+  .product-card p {
+    color: #555;
+  }
+
+  .product-card .price {
+    font-size: 1.4rem;
+    color: #007bff;
+    font-weight: bold;
+  }
+</style>
