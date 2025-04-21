@@ -27,7 +27,7 @@ window.agregarProducto = async function() {
     const stock = parseInt(document.getElementById("stock").value);
 
     try {
-      const response = await fetch('http://localhost:8081/v1/products', {
+      const response = await fetch('http://localhost:8081/v1/product', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -59,12 +59,17 @@ window.agregarProducto = async function() {
     });
   });
 
-window.editarProducto = async function(id) {
+
+  window.editarProducto = async function(id) {
+    const confirmacion = confirm("¿Estás seguro de editar la informacion de este producto?");
+    if (!confirmacion) return;
+
     const nombre = document.getElementById("name").value;
     const descripcion = document.getElementById("description").value;
     const precio = parseFloat(document.getElementById("price").value);
     const stock = parseInt(document.getElementById("stock").value);
-  
+
+
     try {
       const response = await fetch(`http://localhost:8081/v1/products/${id}`, {
         method: 'PUT',
@@ -88,3 +93,11 @@ window.editarProducto = async function(id) {
       alert("Error al editar producto: " + error.message);
     }
   }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const boton = document.getElementById("guardar");
+    boton?.addEventListener("click", async () => {
+      await window.editarProducto();
+      window.location.href='/productos';
+    });
+  });

@@ -1,0 +1,138 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+
+export async function getStaticPaths() {
+  const paths = [];
+
+  const res = await fetch('http://localhost:8081/v1/sales');
+  const data = await res.json();
+  const sales = data.sales;
+
+  if (!res.ok) {
+    throw new Error(`Error al obtener cantidad de productos para dynamic-routes de Astro: ${res.status} `+res.statusText +
+    "\nRevisar estado del servicio en Go correspondiente");
+  }
+
+  console.log('Cantidad:', sales.length);
+
+  for (let i = 1; i <= sales.length; i++) {
+    paths.push({ params: { id: i.toString() } });
+  }
+  return paths;  
+}
+
+interface Sale {
+  id: string;
+  product_id: string;
+  quantity: number;
+  total_price: number;
+  sale_date: string;
+}
+
+interface Product {
+  id: number;
+  name: string;
+  description: string;
+  price: number;
+  stock: number;
+}
+
+const { params } = Astro;
+const saleId = params.id; 
+console.log('ID de la venta:', saleId);
+
+const res = await fetch(`http://localhost:8081/v1/sales/${saleId}`);
+if (!res.ok) {
+  throw new Error(`Error al obtener venta: ${res.status}`);
+}
+const venta = await res.json();
+
+const res2 = await fetch('http://localhost:8081/v1/products');
+ if (!res2.ok) {
+  throw new Error(`Error al obtener productos: ${res2.status}`);
+}
+const data = await res2.json();
+
+const products: Product[] = data.products.sort((a: { name: string; }, b: { name: any; }) => a.name.localeCompare(b.name));
+---
+<Layout>
+    <div class="contenido">
+        <div class="editar-venta">
+            <h1>Editar Venta</h1>
+            <form class="form">
+                <label for="product_id">Producto:</label>
+                <select name="product_id" id="product_id" required>
+                    <option value="">Seleccione un producto</option>
+                    {products.map(product => (
+                        <option value={product.id} selected={product.id === venta.sale.product_id}>{product.name}</option>
+                    ))}
+                </select>
+
+                <label for="quantity">Cantidad:</label>
+                <input type="number" name="quantity" id="quantity" placeholder="Cantidad" value={venta.sale.quantity} required>
+
+                <label for="total_price">Precio Total:</label>
+                <input type="number" name="total_price" id="total_price" placeholder="Precio Total" step="0.01" value={venta.sale.total_price} required>
+
+                <label for="sale_date">Fecha de Venta:</label>
+                <input type="date" name="sale_date" id="sale_date" placeholder="Fecha de Venta" value={venta.sale.sale_date} required>
+
+                <button id="guardar">Editar</button>
+            </form>
+        </div>
+    </div>
+</Layout>
+
+<script src="/src/js/productos.js"></script>
+
+<style>
+
+  .contenido {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  h1 {
+    font-size: 3rem;
+    margin-top: 2rem;
+    margin-bottom: 2.5rem;
+    text-align: center;
+  }
+  
+  .form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  input {
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid #ccc;
+    background-color: rgb(63, 65, 77);
+    color: white;
+  }
+
+  #editar {
+    border: none;
+    margin-top: 1rem;
+    border-radius: 0.5em;
+    padding: 0.67rem;
+    background-color: rgb(63, 65, 77);
+    color: white;
+    cursor: pointer;
+    font-weight: bold
+  }
+
+  .editar-producto {;
+    border: #ccc 1px solid;
+    padding-bottom: 2rem;
+    width: 30rem;
+    margin-top: 3rem;
+    border-radius: 1rem;
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
+  }
+
+</style>

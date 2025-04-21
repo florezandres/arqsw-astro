@@ -1,10 +1,24 @@
 ---
 import Layout from "../../../layouts/Layout.astro";
 
-export function getStaticPaths() {
-  return [
+export async function getStaticPaths() {
+  const paths = [];
 
-  ];
+  const res = await fetch('http://localhost:8081/v1/products');
+  const data = await res.json();
+  const products = data.products;
+
+  if (!res.ok) {
+    throw new Error(`Error al obtener cantidad de productos para dynamic-routes de Astro: ${res.status} `+res.statusText +
+    "\nRevisar estado del servicio en Go correspondiente");
+  }
+
+  console.log('Cantidad:', products.length);
+
+  for (let i = 1; i <= products.length; i++) {
+    paths.push({ params: { id: i.toString() } });
+  }
+  return paths;  
 }
 
 interface Product {
@@ -24,6 +38,8 @@ if (!res.ok) {
   throw new Error(`Error al obtener producto: ${res.status}`);
 }
 const producto = await res.json();
+
+console.log(producto);
 ---
 <Layout>
     <div class="contenido">
@@ -31,22 +47,24 @@ const producto = await res.json();
             <h1>Editar Item</h1>
             <form class="form">
                 <label for="nombre">Nombre:</label>
-                <input type="text" name="nombre" id="nombre" placeholder="Nombre del producto" value={producto.name}>
+                <input type="text" name="nombre" id="nombre" placeholder="Nombre del producto" value={producto.product.name}>
     
                 <label for="descripcion">Descripcion:</label>
-                <input type="text" name="descripcion" id="descripcion" placeholder="Descripcion del producto" value={producto.description}>
+                <input type="text" name="descripcion" id="descripcion" placeholder="Descripcion del producto" value={producto.product.description}>
     
                 <label for="precio">Precio:</label>
-                <input type="number" name="precio" id="precio" placeholder="Precio" value={producto.price}>
+                <input type="number" name="precio" id="precio" placeholder="Precio" value={producto.product.price}>
     
                 <label for="stock">Stock:</label>
-                <input type="number" name="stock" id="stock" placeholder="Unidades" value={producto.stock}>
+                <input type="number" name="stock" id="stock" placeholder="Unidades" value={producto.product.stock}>
     
-                <button type="submit" id="agregar">Guardar cambios</button>
+                <button id="guardar">Editar</button>
             </form>
         </div>
     </div>
 </Layout>
+
+<script src="/src/js/productos.js"></script>
 
 <style>
 
@@ -78,7 +96,7 @@ const producto = await res.json();
     color: white;
   }
 
-  #agregar {
+  #editar {
     border: none;
     margin-top: 1rem;
     border-radius: 0.5em;
@@ -97,4 +115,5 @@ const producto = await res.json();
     border-radius: 1rem;
     box-shadow: 0 2px 8px rgba(255, 255, 255, 0.3);
   }
+
 </style>
