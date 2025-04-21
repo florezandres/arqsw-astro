@@ -1,46 +1,47 @@
 syntax = "proto3";
 
 package product;
-option go_package = "Taller2/Product/gen/go/api";
+option go_package = "Taller2/Product/gen/go/api"; // Ruta COMPLETA desde el módulo
 
-// Importación necesaria para grpc-gateway
 import "google/api/annotations.proto";
 
 service ProductService {
   // Command
   rpc CreateProduct (CreateProductRequest) returns (CreateProductResponse) {
     option (google.api.http) = {
-      post: "/products"
+      post: "/v1/products"
       body: "*"
     };
   }
 
   rpc UpdateProduct (UpdateProductRequest) returns (UpdateProductResponse) {
     option (google.api.http) = {
-      put: "/products/{id}"
+      put: "/v1/products/{id}"
       body: "*"
     };
   }
 
   rpc DeleteProduct (DeleteProductRequest) returns (DeleteProductResponse) {
     option (google.api.http) = {
-      delete: "/products/{id}"
+      delete: "/v1/products/{id}"
     };
   }
 
   // Query
   rpc GetProduct (GetProductRequest) returns (GetProductResponse) {
     option (google.api.http) = {
-      get: "/products/{id}"
+      get: "/v1/products/{id}"
     };
   }
 
   rpc ListProducts (ListProductsRequest) returns (ListProductsResponse) {
     option (google.api.http) = {
-      get: "/products"
+      get: "/v1/products"
     };
   }
 }
+
+
 
 // Mensajes (compartidos para Command y Query)
 message Product {
@@ -50,6 +51,9 @@ message Product {
   double price = 4;
   int32 stock = 5;
 }
+
+// Command requests/responses...
+// Query requests/responses...
 
 // Command messages
 message CreateProductRequest {
