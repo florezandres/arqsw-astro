@@ -1,14 +1,28 @@
 ---
 import Layout from "../layouts/Layout.astro";
 
-const res = await fetch('http://localhost:8081/products?page=1&limit=20');
-const data = await res.json();
+// const res = await fetch('http://localhost:8081/products?page=1&limit=20');
+// const data = await res.json();
 
 interface Product {
   name: string;
   description: string;
   price: number;
 }
+
+// data.products?.push({
+//   name: 'Producto Quemado',
+//   description: 'Este producto ha sido quemado por un error en el sistema',
+//   price: 0,
+// });
+
+const products: Product[] = [
+  {
+    name: 'Producto Quemado',
+    description: 'Este producto ha sido quemado por un error en el sistema',
+    price: 10.5,
+  },
+];
 
 const handleClick = (name: string) => {
   console.log(name);
@@ -17,27 +31,51 @@ const handleClick = (name: string) => {
   url.searchParams.set('name', name);
   location.href = url.toString();
 };
-
 ---
 
 <Layout title="Productos">
   <h1>Productos</h1>
   <p>Listado de productos</p>
   <button>Agregar producto a inventario</button>
-  {data.products?.length ? (
-    <ul>
-      {data.products?.map((product: Product) => (
-        <li onclick={`javascript:handleClick('${product.name}')`}>
-          <strong>{product.name}</strong>: {product.description} - ${product.price}
-        </li>
-      ))}
-    </ul>
+  {products?.length ? (
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Descripcion</th>
+          <th>Precio</th>
+        </tr>
+      </thead>
+      <tbody>
+        {products?.map((product: Product) => (
+          <tr onclick={`javascript:handleClick('${product.name}')`}>
+            <td><strong>{product.name}</strong></td>
+            <td>{product.description}</td>
+            <td>${product.price}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   ) : (
     <p>No hay productos en el inventario</p>
   )}
 </Layout>
 
 <style>
+
+  table {
+    width: 90%;
+    border-collapse: collapse;
+    margin: 0 auto;
+  }
+
+  th,
+  td {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ccc;
+  }
+
   .product-container {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
@@ -74,3 +112,4 @@ const handleClick = (name: string) => {
     font-weight: bold;
   }
 </style>
+
