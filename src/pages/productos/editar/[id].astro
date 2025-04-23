@@ -1,8 +1,12 @@
 ---
 import Layout from "../../../layouts/Layout.astro";
 
+interface Params {
+  id: string;
+}
+
 export async function getStaticPaths() {
-  const paths = [];
+  
 
   const res = await fetch('http://localhost:8081/v1/products');
   const data = await res.json();
@@ -15,9 +19,10 @@ export async function getStaticPaths() {
 
   console.log('Cantidad:', products.length);
 
-  for (let i = 1; i <= products.length; i++) {
-    paths.push({ params: { id: i.toString() } });
-  }
+  const paths = products.map((product: { uuid: any; }) => ({
+    params: { id: product.uuid } // Asegúrate de que la propiedad se llame "uuid"
+  }));
+
   return paths;  
 }
 
@@ -30,7 +35,7 @@ interface Product {
 }
 
 const { params } = Astro;
-const productId = params.id; 
+const { id: productId } = params as Params;
 console.log('ID del producto:', productId);
 
 const res = await fetch(`http://localhost:8081/v1/products/${productId}`);
